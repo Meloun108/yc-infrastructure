@@ -1,0 +1,13 @@
+#cloud-config
+groups:
+  - ansible
+
+users:
+  - name: ansible
+    gecos: Ansible User
+    primary_group: ansible
+    groups: sudo
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIJibF8YyTiG2wA384haL13OKBasP0Ztsm+C2fLo2l/Eq student@fhm6hdjirhhch4rn1fk4"

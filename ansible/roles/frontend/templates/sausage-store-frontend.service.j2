@@ -1,0 +1,19 @@
+[Unit]
+Description=sausage-store
+After=syslog.target
+After=network.target
+
+[Service]
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+SuccessExitStatus=143
+User={{ frontend_service_user }}
+Group={{ frontend_service_user }}
+Type=simple
+StandardOutput=file:/opt/log/sausage-store-frontend.log
+ExecStart=/usr/bin/http-server /var/www-data/public_html/ -p 80 --proxy http://localhost:8080
+ExecStop=/bin/kill -9 $MAINPID
+Restart=always
+RestartSec=5s
+
+[Install]
+WantedBy=multi-user.target

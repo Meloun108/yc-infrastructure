@@ -1,0 +1,2 @@
+test_deploy_kube
+shot #8

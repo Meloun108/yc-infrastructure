@@ -1,0 +1,39 @@
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Chart.Name }}
+  labels:
+    app: {{ .Chart.Name }}
+    app.kubernetes.io/name: sausage-frontend
+    app.kubernetes.io/instance: "{{ .Release.Name }}"
+    app.kubernetes.io/version: "{{ .Chart.AppVersion }}"
+    app.kubernetes.io/managed-by: "{{ .Release.Service }}"
+    helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+    meta.helm.sh/release-namespace: "std-012-005"
+    app.kubernetes.io/component: frontend
+    app.kubernetes.io/part-of: sausage-store
+    env: production
+spec:
+  # В кластере может быть несколько Ingress Controllers, мы используем NGINX
+  ingressClassName: "nginx"
+  tls:
+    - secretName: ingress-example-tls
+      hosts:
+        - "{{ .Values.fqdn }}"
+  rules:
+    # Хост определяет правило направления траффика по доменному имени
+  - host: "{{ .Values.fqdn }}"
+    http:
+      # Для различных путей в URL можно указать различные бэкенд-сервисы
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            # Заранее создан сервис типа ClusterIP
+            # Он выступает в качестве бэкенда нашего Ingress
+            name: {{ .Chart.Name }}
+            port:
+              # У сервиса может быть несколько портов, указываем нужный нам
+              number: 8080

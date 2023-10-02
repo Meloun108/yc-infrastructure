@@ -1,0 +1,22 @@
+backend:
+  image: gitlab.praktikum-services.ru:5050/std-012-005/sausage-store/sausage-backend:latest
+  imagePullPolicy: Always
+  replicas: 1
+  data:
+    SPRING_DATASOURCE_USERNAME: bWVsb3VuODE1
+    SPRING_DATASOURCE_PASSWORD: RGV2b3BzMTIzIQ==
+    SPRING_DATASOURCE_URL: amRiYzpwb3N0Z3Jlc3FsOi8vcmMxYi1kZzNhM2tsdDRydDZrazQ3Lm1kYi55YW5kZXhjbG91ZC5uZXQ6NjQzMi9tZWxvdW44MTU=
+    SPRING_DATA_MONGODB_URI: bW9uZ29kYjovL21lbG91bjgxNTpEZXZvcHMxMjMhQHJjMWEtZnRzcTgydW9sNHQ3bWNvcS5tZGIueWFuZGV4Y2xvdWQubmV0OjI3MDE4L21lbG91bjgxNT90bHM9dHJ1ZQ==
+
+backend-report:
+  image: gitlab.praktikum-services.ru:5050/std-012-005/sausage-store/sausage-backend-report:latest
+  imagePullPolicy: Always
+  replicas: 1
+  data:
+    DB: bW9uZ29kYjovL21lbG91bjgxNTpEZXZvcHMxMjMhQHJjMWEtZnRzcTgydW9sNHQ3bWNvcS5tZGIueWFuZGV4Y2xvdWQubmV0OjI3MDE4L21lbG91bjgxNT90bHM9dHJ1ZSZ0bHNBbGxvd0ludmFsaWRDZXJ0aWZpY2F0ZXM9dHJ1ZQ==
+
+frontend:
+  fqdn: std-012-005.k8s.praktikum-services.tech
+  image: gitlab.praktikum-services.ru:5050/std-012-005/sausage-store/sausage-frontend:latest
+  imagePullPolicy: Always
+  replicas: 1

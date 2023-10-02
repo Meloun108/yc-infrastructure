@@ -1,0 +1,14 @@
+---
+- name: Backend
+  hosts: sausage-store
+  vars_files:
+    - group_vars/backend.yml
+  roles:
+    - backend
+
+- name: Front
+  hosts: sausage-store
+  vars_files:
+    - group_vars/frontend.yml
+  roles:
+    - frontend

@@ -1,0 +1,115 @@
+---
+# tasks file for frontend
+
+#- name: Update apt-get repo and cache
+#  become: true
+#  apt:
+#    update_cache: yes
+#    force_apt_get: yes
+#    cache_valid_time: 3600
+
+#- name: Upgrade all apt packages
+#  become: true
+#  apt:
+#    upgrade: dist
+#    force_apt_get: yes
+
+- name: Install npm
+  become: true
+  apt:
+    name: npm
+    state: present
+    update_cache: yes
+
+- name: Add nodejs apt key
+  become: true
+  apt_key:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    state: present
+
+- name: Add nodejs repository
+  become: true
+  apt_repository:
+    repo: deb https://deb.nodesource.com/node_12.x {{ ansible_lsb.codename }} main
+    state: present
+    update_cache: yes
+
+- name: Install nodejs
+  become: true
+  apt:
+    name: nodejs
+    state: latest
+
+- name: Install http-server
+  become: true
+  npm:
+    name: http-server
+    global: yes
+
+- name: Add user
+  become: true
+  user:
+    name: "{{ frontend_service_user }}"
+    create_home: no
+    shell: /sbin/nologin
+
+- name: Create dir
+  become: true
+  ansible.builtin.file:
+    path: /var/www-data
+    state: directory
+    mode: '0755'
+    owner: "{{ frontend_service_user }}"
+    group: "{{ frontend_service_group }}"
+
+- name: Download artifact
+  become: true
+  ansible.builtin.get_url:
+    url: "https://nexus.praktikum-services.ru/repository/sausage-store-oganov-alexander-frontend/sausage-store-front/sausage-store/1.0.390507/sausage-store-1.0.390507.tar.gz"
+    dest: /var/www-data/sausage-store.tar.gz
+    username: "{{ frontend_nexus_login }}"
+    password: "{{ frontend_nexus_password }}"
+
+- name: Unzip tar.gz
+  become: true
+  ansible.builtin.unarchive:
+    src: /var/www-data/sausage-store.tar.gz
+    dest: /var/www-data
+    remote_src: yes
+
+- name: Create dir for jar
+  become: true
+  ansible.builtin.file:
+    path: /var/www-data
+    state: directory
+    recurse: yes
+    mode: '0755'
+    owner: "{{ frontend_service_user }}"
+    group: "{{ frontend_service_group }}"
+
+- name: Create dir for log
+  become: true
+  ansible.builtin.file:
+    path: /opt/log
+    state: directory
+    recurse: yes
+    mode: '0755'
+    owner: "{{ frontend_service_user }}"
+    group: "{{ frontend_service_group }}"
+
+- name: Temp conf
+  become: true
+  template:
+    src: sausage-store-frontend.service.j2
+    dest: /etc/systemd/system/sausage-store-frontend.service
+
+- name: Systemd reload
+  become: true
+  systemd:
+    daemon_reload: yes
+
+- name: Run SStore
+  become: true
+  service:
+    name: sausage-store-frontend
+    state: restarted
